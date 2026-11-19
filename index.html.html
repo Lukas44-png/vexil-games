@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11131b">
+  <title>Vexil.games — Spielen. Jederzeit.</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #11131b;
+      --panel: rgba(25, 28, 40, .9);
+      --panel-soft: rgba(33, 37, 52, .78);
+      --line: rgba(255,255,255,.09);
+      --text: #f5f5fb;
+      --muted: #a4a8ba;
+      --accent: #aa85ff;
+      --accent2: #67e6c1;
+      --shadow: 0 24px 80px rgba(0,0,0,.32);
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display:none !important; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text);
+      font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(ellipse at 12% 0%, #332755 0, transparent 38%),
+        radial-gradient(ellipse at 92% 18%, #183a3a 0, transparent 32%), var(--bg);
+      background-attachment: fixed;
+    }
+    body[data-theme="galaxy"] { background: radial-gradient(ellipse at 52% 0%, #56368d 0, transparent 43%), radial-gradient(ellipse at 90% 35%, #263c77 0, transparent 36%), radial-gradient(ellipse at 8% 78%, #2d245f 0, transparent 38%), #0c0d19; }
+    body[data-theme="cat"] { background: radial-gradient(ellipse at 12% 0%, #74417c 0, transparent 40%), radial-gradient(ellipse at 90% 40%, #41365b 0, transparent 38%), linear-gradient(135deg,#17131e,#262036 55%,#11131b); }
+    body[data-theme="dog"] { background: radial-gradient(ellipse at 85% 12%, #805b35 0, transparent 38%), radial-gradient(ellipse at 12% 72%, #574027 0, transparent 40%), linear-gradient(135deg,#1d1814,#30261d 55%,#11131b); }
+    body[data-theme="bird"] { background: radial-gradient(ellipse at 72% 5%, #286991 0, transparent 42%), radial-gradient(ellipse at 6% 75%, #326b77 0, transparent 38%), linear-gradient(135deg,#111b29,#152e38 60%,#11131b); }
+    body[data-theme="ocean"] { background: radial-gradient(ellipse at 24% 0%, #1c7894 0, transparent 42%), radial-gradient(ellipse at 86% 55%, #205f76 0, transparent 42%), linear-gradient(135deg,#101c2c,#103845 62%,#11131b); }
+    body[data-theme="forest"] { background: radial-gradient(ellipse at 88% 12%, #357c4f 0, transparent 38%), radial-gradient(ellipse at 5% 68%, #285b42 0, transparent 40%), linear-gradient(135deg,#121c19,#1c3025 60%,#11131b); }
+    body[data-theme="sunset"] { background: radial-gradient(ellipse at 80% 0%, #b95d63 0, transparent 42%), radial-gradient(ellipse at 10% 55%, #8a4c73 0, transparent 42%), linear-gradient(135deg,#24162d,#47293e 60%,#11131b); }
+    button, input, select { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    .shell { max-width: 1240px; margin: auto; padding: 0 28px 60px; }
+    header { height: 82px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:11px; color:var(--text); text-decoration:none; font-size:19px; font-weight:850; letter-spacing:-.7px; }
+    .brand-mark { width:35px;height:35px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#c7a8ff,#8764f5); color:#171220;font-size:19px;box-shadow:0 6px 24px #a783ff44; }
+    .brand span:last-child { color:#b79aff; }
+    .top-actions { display:flex; align-items:center; gap:12px; }
+    .online { color:var(--muted); font-size:13px; }.online b { color:var(--accent2); }
+    .save-indicator { color:#b8f1dc;font-size:12px;font-weight:700;white-space:nowrap; }
+    .btn { border:1px solid var(--line); background:var(--panel-soft); border-radius:11px; padding:10px 15px; font-weight:700; transition:.18s ease; }
+    .btn:hover { transform:translateY(-1px); border-color:#a783ff88; background:#39304f; }
+    .btn.primary { color:#211a30; border:0; background:linear-gradient(135deg,#c4a8ff,#9977f7); }
+    .btn.small { padding:7px 10px; font-size:13px; border-radius:9px; }
+    .hero { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:44px 0 32px; }
+    .eyebrow { color:var(--accent2); font-size:12px; text-transform:uppercase; font-weight:800; letter-spacing:1.6px; }
+    h1 { margin:8px 0 10px; font-size:clamp(34px,5vw,54px); line-height:1.08; letter-spacing:-2px; }
+    h1 em { color:#b99bff; font-style:normal; }
+    .hero p { color:var(--muted); margin:0; max-width:540px; }
+    .hero-stats { display:flex; gap:12px; }
+    .stat { min-width:110px; padding:17px 19px; border:1px solid var(--line); background:#ffffff08; border-radius:16px; }
+    .stat strong { display:block; font-size:23px; }.stat span { color:var(--muted); font-size:12px; }
+    .layout { display:grid; grid-template-columns:minmax(0,1fr) 292px; gap:24px; align-items:start; }
+    .section-heading { display:flex;align-items:end;justify-content:space-between; gap:16px; margin:8px 0 16px; }
+    h2 { margin:0; font-size:21px; letter-spacing:-.5px; }
+    .subtle { color:var(--muted);font-size:13px; }
+    .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+    .game-tools { display:flex;align-items:center;gap:10px;margin:0 0 12px; }
+    .game-search-wrap { position:relative;flex:1;min-width:0; }
+    .game-search-wrap:before { content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-55%);color:var(--muted);font-size:22px;pointer-events:none; }
+    .game-search { width:100%;min-height:42px;padding-left:40px;background:#ffffff09; }
+    .empty-state { grid-column:1/-1;display:grid;justify-items:center;gap:8px;padding:34px 18px;border:1px dashed #ffffff25;border-radius:17px;background:#ffffff05;text-align:center; }
+    .empty-state > span { font-size:26px; }.empty-state p { margin:0;color:var(--muted);font-size:13px; }
+    .filters { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+    .filter { border:1px solid var(--line); border-radius:99px; padding:7px 12px; background:transparent; color:var(--muted); font-size:12px; font-weight:700; }
+    .filter.active,.filter:hover { background:#a783ff24;color:#d4c3ff;border-color:#a783ff66; }
+    .game-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px; }
+    .game-card { position:relative;overflow:hidden;text-align:left;min-height:164px;padding:17px;border-radius:17px;border:1px solid var(--line);background:linear-gradient(145deg,#ffffff0b,#ffffff04);transition:.2s; }
+    .game-card:hover { transform:translateY(-3px);border-color:#a783ff88;box-shadow:0 12px 32px #0003; }
+    .game-card:after { content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-42px;top:-47px;background:var(--glow,#a783ff);filter:blur(40px);opacity:.28;pointer-events:none; }
+    .game-icon { width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#ffffff0b;font-size:22px;margin-bottom:12px; }
+    .game-card h3 { margin:0 0 3px;font-size:15px; }.game-card p { margin:0;color:var(--muted);font-size:12px; }
+    .game-meta { display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:12px;color:#aeb2c2;font-size:11px; }
+    .play-label { color:#c6aaff;font-weight:800; }
+    .best-tag { color:#ffe09b;font-weight:800; }
+    .side-card { border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:19px;margin:8px 0 15px;box-shadow:var(--shadow); }
+    .side-title { display:flex;align-items:center;justify-content:space-between;margin-bottom:15px; }
+    .side-title h2 { font-size:16px; }.pill { background:#67e6c11a;color:var(--accent2);font-size:10px;font-weight:800;padding:4px 8px;border-radius:99px; }
+    .leader-row { display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line); }
+    .leader-row:last-child { border:0;padding-bottom:0; }
+    .rank { color:#b8a2f5;width:18px;font-weight:800;font-size:12px; }.avatar { width:31px;height:31px;border-radius:10px;background:#ffffff0d;display:grid;place-items:center; }
+    .leader-name { flex:1;font-size:13px;font-weight:700; }.leader-score { font-size:12px;color:var(--accent2);font-weight:800; }
+    .empty { color:var(--muted);font-size:13px;padding:10px 0; }
+    .theme-list { display:flex;flex-wrap:wrap;gap:8px; }.theme-btn { background:#ffffff08;border:1px solid var(--line);padding:8px 10px;border-radius:10px;font-size:12px; }.theme-btn.active { border-color:#a783ff99;background:#a783ff20; }
+    .notice { color:var(--muted);font-size:12px;margin:13px 0 0; }
+    .modal-backdrop { position:fixed;inset:0;z-index:5;display:none;place-items:center;padding:18px;background:#08090fbd;backdrop-filter:blur(8px); }
+    .modal-backdrop.open { display:grid; }
+    .modal { width:min(680px,100%);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#202333,#171923 70%);border:1px solid #ffffff20;border-radius:22px;box-shadow:0 30px 100px #0009;padding:23px; }
+    .modal-head { display:flex;align-items:start;justify-content:space-between;gap:15px;margin-bottom:17px; }
+    .modal-head h2 { margin:0 0 4px;font-size:22px; }.modal-head p { margin:0;color:var(--muted);font-size:13px; }
+    .game-best { display:inline-flex;margin-top:8px;padding:4px 9px;border-radius:99px;background:#ffdc9120;color:#ffdf9a;font-size:11px;font-weight:800; }
+    .close { border:1px solid var(--line);background:#ffffff08;border-radius:10px;width:36px;height:36px;font-size:20px; }
+    .game-area { min-height:240px;border:1px solid #ffffff12;background:radial-gradient(ellipse at 50% 0%,#25263a,#0d0f17 75%);border-radius:18px;padding:22px;display:grid;align-content:center;justify-items:center;gap:14px;text-align:center;box-shadow:inset 0 1px #ffffff08; }
+    .game-area h3 { margin:0;font-size:18px; }.game-area p { margin:0;color:var(--muted); }
+    .game-controls { display:flex;flex-wrap:wrap;justify-content:center;gap:9px; }.game-controls input { width:150px; }
+    input, select { color:var(--text);background:#11131b;border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none; }
+    input:focus,select:focus { border-color:#a783ff; }
+    .cell-grid { display:grid;grid-template-columns:repeat(4,54px);gap:7px; }.cell-grid button { width:54px;height:54px;border:1px solid var(--line);border-radius:12px;background:#ffffff0a;font-size:20px; }
+    .cell-grid.ttt { grid-template-columns:repeat(3,62px); }.cell-grid.ttt button { width:62px;height:62px;font-size:23px; }
+    .target-arena { width:min(100%,360px);height:180px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:radial-gradient(ellipse,#292440,#131520); }
+    .target-dot { position:absolute;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:linear-gradient(145deg,#ff9b9b,#e74f75);box-shadow:0 0 25px #ff5b8b88;transform:translate(-50%,-50%); }
+    .reflex-pad { width:min(100%,360px);min-height:108px;border:0;border-radius:18px;background:linear-gradient(145deg,#f36d75,#bd334c);color:#fff;font-size:20px;font-weight:900;box-shadow:0 12px 30px #bd334c44; }
+    .reflex-pad.ready { background:linear-gradient(145deg,#58e0a6,#168b63);color:#09291d;box-shadow:0 12px 30px #35d79655; }
+    .mole-grid { display:grid;grid-template-columns:repeat(3,72px);gap:8px; }
+    .mole-grid button { width:72px;height:60px;border:1px solid var(--line);border-radius:16px;background:#ffffff09;font-size:26px; }
+    .mole-grid button.active { background:#a783ff2b;border-color:#a783ff99; }
+    .leader-tools { display:flex;align-items:center;gap:8px;margin:6px 0 10px; }
+    .leader-tools select { width:100%;font-size:12px;padding:8px 10px; }
+    .admin-stat-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0; }
+    .admin-stat { border:1px solid var(--line);border-radius:12px;background:#ffffff07;padding:12px; }
+    .admin-stat strong { display:block;font-size:18px; }.admin-stat span { display:block;color:var(--muted);font-size:11px; }
+    .admin-progress { height:6px;border-radius:99px;background:#ffffff12;overflow:hidden;margin-top:8px; }
+    .admin-progress span { height:100%;display:block;background:linear-gradient(90deg,#9c7af5,#67e6c1); }
+    .event-item.active { border-color:#67e6c155;background:#67e6c10b; }
+    .event-banner { display:flex;align-items:center;gap:12px;padding:14px 17px;margin:-8px 0 23px;border:1px solid #f6c76b55;border-radius:15px;background:linear-gradient(110deg,#f6c76b20,#b579ff18); }
+    .event-banner strong { display:block;color:#ffdc91; }.event-banner span { color:var(--muted);font-size:12px; }
+    .resume-banner { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;margin:-8px 0 22px;border:1px solid #67e6c155;border-radius:15px;background:linear-gradient(105deg,#67e6c119,#a783ff17); }
+    .resume-banner strong { display:block;color:#a8f4da; }.resume-banner span { color:var(--muted);font-size:12px; }
+    .resume-actions { display:flex;gap:8px;align-items:center; }
+    .ban-notice { margin:0 0 18px;padding:13px 15px;border:1px solid #ff6f8555;border-radius:13px;background:#ff6f8512;color:#ffc4cc; }
+    .uno-table { width:min(100%,500px);border:1px solid #ffffff1a;border-radius:18px;padding:16px;background:radial-gradient(ellipse,#204b39,#11241e); }
+    .uno-top { display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px;font-size:12px;color:#d9ebdf; }
+    .uno-discard { width:68px;height:94px;border:3px solid #fff;border-radius:12px;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 7px 18px #0005;margin:auto; }
+    .uno-hand { display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:15px; }
+    .uno-card { width:48px;height:68px;border:2px solid #fff;border-radius:10px;color:#fff;font-weight:900;font-size:15px;box-shadow:0 4px 10px #0004; }
+    .uno-card:not(:disabled):hover { transform:translateY(-7px) rotate(-2deg);box-shadow:0 10px 20px #0007; }
+    .uno-card:disabled { opacity:.42;cursor:not-allowed; }.uno-red { background:#e94750; }.uno-blue { background:#3478db; }.uno-green { background:#24a46b; }.uno-yellow { background:#e4b83a;color:#201c10; }.uno-wild { background:conic-gradient(#e94750 0 25%,#3478db 0 50%,#24a46b 0 75%,#e4b83a 0); }
+    .ban-list { display:grid;gap:8px;margin-top:12px;max-height:200px;overflow:auto; }
+    .ban-row { display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #ff6f8540;background:#ff6f850b;border-radius:10px;padding:9px 10px;font-size:12px; }
+    .ban-row small { display:block;color:var(--muted); }.ban-chip { color:#ffb1bd;font-size:10px;font-weight:800; }
+    button:disabled { opacity:.45;cursor:not-allowed;transform:none!important; }
+    button:focus-visible,input:focus-visible,select:focus-visible { outline:2px solid #c4a8ff;outline-offset:3px; }
+    .owner-box { display:flex;gap:9px;align-items:center;flex-wrap:wrap; }
+    .owner-controls { border-top:1px solid var(--line);margin-top:16px;padding-top:15px; }.owner-controls h3 { margin:0 0 8px;font-size:14px; }
+    .owner-tabs { display:flex;flex-wrap:wrap;gap:7px;margin:14px 0; }
+    .owner-tab { border:1px solid var(--line);border-radius:10px;background:#ffffff08;padding:8px 11px;color:var(--muted);font-size:12px;font-weight:800; }
+    .owner-tab.active,.owner-tab:hover { border-color:#a783ff88;background:#a783ff20;color:#e3d8ff; }
+    .owner-controls p { color:var(--muted);font-size:12px;margin:0 0 12px; }
+    .owner-tools { display:flex;flex-wrap:wrap;gap:8px; }.owner-tool { border:1px solid #a783ff44;background:#a783ff12;color:#d9ccff;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:700; }
+    .admin-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }.admin-grid label { display:grid;gap:5px;color:var(--muted);font-size:12px; }.admin-grid .wide { grid-column:1/-1; }
+    .event-list { display:grid;gap:8px;margin-top:13px;max-height:245px;overflow:auto; }.event-item { display:flex;align-items:center;justify-content:space-between;gap:10px;background:#ffffff08;border:1px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12px; }.event-item small { color:var(--muted);display:block; }
+    .toast { position:fixed;z-index:9;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#242638;border:1px solid #ffffff20;padding:11px 16px;border-radius:12px;box-shadow:var(--shadow);transition:.2s; }.toast.show { transform:translate(-50%,0);opacity:1; }
+    footer { border-top:1px solid var(--line);margin-top:36px;padding-top:18px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap; }
+    @media(max-width:900px) { .layout{grid-template-columns:1fr}.side-column{display:grid;grid-template-columns:1fr 1fr;gap:12px}.side-card{margin:0} }
+    @media(max-width:650px) { .shell{padding:0 16px 38px}header{height:68px}.online{display:none}.save-indicator{font-size:10px}.hero{align-items:flex-start;flex-direction:column;padding:32px 0 24px}.hero-stats{width:100%}.stat{flex:1;min-width:0}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.game-card{padding:13px;min-height:158px}.side-column{grid-template-columns:1fr}.admin-grid{grid-template-columns:1fr}.admin-grid .wide{grid-column:auto}.admin-stat-grid{grid-template-columns:repeat(2,1fr)}.modal{padding:17px}.game-area{padding:16px}.game-tools{align-items:stretch;flex-direction:column}.game-tools>.btn{width:100%} }
+  </style>
+</head>
+<body data-theme="galaxy">
+  <div class="shell">
+    <header>
+      <a class="brand" href="#" aria-label="Vexil.games Startseite"><span class="brand-mark">V</span><span>VEXIL<span>.GAMES</span></span></a>
+      <div class="top-actions"><span class="online"><b>●</b> Offline spielbereit</span><span class="save-indicator" id="save-status" aria-live="polite">💾 Lokal gespeichert</span><button class="btn small" id="owner-open">♙ Owner Panel</button></div>
+    </header>
+    <section class="hero">
+      <div><div class="eyebrow">Deine Spielecke · ohne Download</div><h1>Spielen. <em>Jederzeit.</em></h1><p>21 kleine Klassiker und Duelle für zwischendurch. Kostenlos, direkt im Browser und auch ohne Internet spielbar.</p></div>
+      <div class="hero-stats"><div class="stat"><strong id="game-total">21</strong><span>Minispiele</span></div><div class="stat"><strong id="score-stat">0</strong><span>Deine Punkte</span></div></div>
+    </section>
+    <div class="event-banner" id="active-event-banner" role="status" hidden></div>
+    <div class="resume-banner" id="resume-banner" role="region" aria-label="Gespeichertes Duell" hidden><div><strong>💾 Gespeicherter Spielstand</strong><span id="resume-description"></span></div><div class="resume-actions"><button class="btn primary small" id="resume-game">Fortsetzen</button><button class="btn small" id="discard-resume" aria-label="Spielstand löschen">×</button></div></div>
+    <div class="ban-notice" id="ban-notice" hidden></div>
+    <div class="layout">
+      <main>
+        <div class="section-heading"><div><h2>Spiele entdecken</h2><div class="subtle">Wähle ein Spiel und leg direkt los.</div></div><span class="subtle" id="game-count" aria-live="polite">21 Spiele</span></div>
+        <div class="game-tools"><div class="game-search-wrap"><label class="sr-only" for="game-search">Spiele suchen</label><input class="game-search" id="game-search" type="search" placeholder="Spiel suchen …" autocomplete="off"></div><button class="btn small" id="quick-play">🎲 Zufallsspiel</button></div>
+        <nav class="filters" aria-label="Spiele filtern">
+          <button class="filter active" data-filter="Alle" aria-pressed="true">Alle</button><button class="filter" data-filter="2 Spieler" aria-pressed="false">👥 2 Spieler</button><button class="filter" data-filter="Arcade" aria-pressed="false">Arcade</button><button class="filter" data-filter="Puzzle" aria-pressed="false">Puzzle</button><button class="filter" data-filter="Klassiker" aria-pressed="false">Klassiker</button><button class="filter" data-filter="Wort & Wissen" aria-pressed="false">Wort & Wissen</button>
+        </nav>
+        <div class="game-grid" id="game-grid"></div>
+      </main>
+      <aside class="side-column">
+        <section class="side-card"><div class="side-title"><h2>🏆 Bestenliste</h2><span class="pill">TOP 5</span></div><label class="subtle" for="public-player-name">Dein Spielername</label><input id="public-player-name" maxlength="18" value="Spieler" style="width:100%;margin:6px 0 10px" aria-label="Dein Spielername"><div class="leader-tools"><select id="leader-filter" aria-label="Bestenliste filtern"><option value="all">Alle Spiele · Gesamtpunkte</option></select></div><div id="leaderboard"></div><p class="notice">Lokal auf diesem Gerät · Spiel wählen für persönliche Bestwerte.</p></section>
+        <section class="side-card"><div class="side-title"><h2>🎨 Hintergrund</h2></div><div class="theme-list" id="themes">
+          <button class="theme-btn active" data-theme="galaxy">🌌 Galaxie</button><button class="theme-btn" data-theme="cat">🐱 Katze</button><button class="theme-btn" data-theme="dog">🐶 Hund</button><button class="theme-btn" data-theme="bird">🐦 Vogel</button><button class="theme-btn" data-theme="ocean">🌊 Ozean</button><button class="theme-btn" data-theme="forest">🌿 Wald</button><button class="theme-btn" data-theme="sunset">🌇 Sonnenuntergang</button>
+        </div><p class="notice">Das Design bleibt offline verfügbar.</p></section>
+      </aside>
+    </div>
+    <footer><span>© Vexil.games · Gemacht für kurze Spielpausen</span><span>Offline-Modus · Speicher: nur in diesem Browser</span></footer>
+  </div>
+  <div class="modal-backdrop" id="game-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><section class="modal"><div class="modal-head"><div><h2 id="modal-title"></h2><p id="modal-subtitle"></p><span class="game-best" id="modal-best">Persönlicher Bestwert: 0</span></div><button class="close" data-close aria-label="Schließen">×</button></div><div class="game-area" id="game-area"></div><div class="owner-controls" id="game-owner-controls" hidden></div></section></div>
+  <div class="modal-backdrop" id="owner-modal" role="dialog" aria-modal="true" aria-labelledby="owner-title"><section class="modal"><div class="modal-head"><div><h2 id="owner-title">♙ Owner Panel</h2><p>Events verwalten und Spieloptionen einstellen.</p></div><button class="close" data-close aria-label="Schließen">×</button></div><div id="owner-content"></div></section></div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    (function () {
+      "use strict";
+      const games = [
+        ["Klicksprint","🖱️","Arcade","Sammle in zehn Sekunden so viele Punkte wie möglich.","click"],
+        ["Schere, Stein, Papier","✂️","Klassiker","Kannst du den Computer schlagen?","rps"],
+        ["Zielklick","🎯","Arcade","Triff das wandernde Ziel, bevor die Zeit abläuft.","target"],
+        ["Farb-Reflex","🐤","Arcade","Stoppe beim Wechsel auf Grün und teste deine Reaktion.","color-reflex"],
+        ["Minesweeper","💣","Puzzle","Decke sichere Felder auf und meide die Minen.","mines"],
+        ["Memory Duell","🃏","2 Spieler","Spielt lokal gegeneinander und sammelt Kartenpaare.","memory2",true],
+        ["Zahlenmix","🔢","Puzzle","Wähle das richtige Ergebnis aus vier Zahlen.","numbermix"],
+        ["Tic-Tac-Toe Duell","⭕","2 Spieler","Drei in einer Reihe – Pass & Play auf einem Gerät.","ttt2",true],
+        ["Vier gewinnt Duell","🔴","2 Spieler","Verbinde vier Spielsteine gegen einen Mitspieler.","connect4",true],
+        ["Münzwurf","🪙","Klassiker","Kopf oder Zahl – was glaubst du?","coin"],
+        ["Zahlenraten","🎯","Klassiker","Errate die geheime Zahl.","guess"],
+        ["Simon Says","🟣","Klassiker","Merk dir die Reihenfolge.","sequence"],
+        ["Hangman","🪢","Wort & Wissen","Errate das versteckte Wort.","word"],
+        ["Wortsalat","🔤","Wort & Wissen","Bring die Buchstaben in die richtige Reihenfolge.","scramble"],
+        ["Quiz Blitz","🧠","Wort & Wissen","Teste dein Wissen mit einer schnellen Frage.","quiz"],
+        ["Reaktionstest","⚡","Arcade","Starte den Test und klicke erst nach dem Farbwechsel.","reaction"],
+        ["Whack-a-Mole","🐹","Arcade","Triff die Maulwürfe, sobald sie aus ihren Löchern kommen.","mole"],
+        ["Kopfrechnen","➗","Puzzle","Löse die zufällige Rechenaufgabe im Kopf.","math"],
+        ["Lichter aus","💡","Puzzle","Schalte alle Lichter mit möglichst wenigen Zügen aus.","lights"],
+        ["Memory","🃏","Puzzle","Finde alle passenden Kartenpaare.","memory"],
+        ["UNO Duell","🎴","2 Spieler","Spielt UNO abwechselnd auf einem Gerät.","uno",true]
+      ].map((g, i) => ({ id:i, name:g[0], icon:g[1], category:g[2], description:g[3], mode:g[4], multiplayer:!!g[5] }));
+      const storage = {
+        read(key, fallback) { try { const v = localStorage.getItem("vexil-" + key); return v ? JSON.parse(v) : fallback; } catch (e) { console.warn("Lokaler Speicher ist nicht verfügbar.", e); return fallback; } },
+        write(key, value) { try { localStorage.setItem("vexil-" + key, JSON.stringify(value)); const status=$("#save-status");if(status)status.textContent="💾 Gespeichert";return true; } catch (e) { showToast("Speichern ist in diesem Browser nicht verfügbar."); const status=$("#save-status");if(status)status.textContent="⚠️ Nicht gespeichert";return false; } }
+      };
+      let scores = storage.read("scores", []);
+      let prefs = storage.read("prefs", { theme:"galaxy", player:"Spieler" });
+      let events = storage.read("events", []);
+      let bans = storage.read("bans", []);
+      let savedMatch = storage.read("match", null);
+      const themes = [
+        ["galaxy","🌌 Galaxie"],["cat","🐱 Katze"],["dog","🐶 Hund"],["bird","🐦 Vogel"],
+        ["ocean","🌊 Ozean"],["forest","🌿 Wald"],["sunset","🌇 Sonnenuntergang"]
+      ];
+      if (prefs.theme==="default" || prefs.theme==="space" || !themes.some(t=>t[0]===prefs.theme)) prefs.theme="galaxy";
+      let ownerUnlocked = false, activeGame = null, gameFinished = false, activeFilter = "Alle", activeOwnerTab = "overview", timer = null, round = {};
+      const modalReturnFocus = new WeakMap();
+      const $ = (s, root=document) => root.querySelector(s);
+      const grid = $("#game-grid"), area = $("#game-area");
+      function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+      function showToast(message) { const el=$("#toast"); el.textContent=message; el.classList.add("show"); clearTimeout(showToast.t); showToast.t=setTimeout(()=>el.classList.remove("show"),2400); }
+      function pruneBans() {
+        const now=Date.now(), before=bans.length;
+        bans=bans.filter(b=>!b.expiresAt||b.expiresAt>now);
+        if(bans.length!==before)storage.write("bans",bans);
+      }
+      function activeBan(name) {
+        pruneBans();
+        return bans.find(b=>b.name.toLowerCase()===String(name).trim().toLowerCase())||null;
+      }
+      function renderBanNotice() {
+        const notice=$("#ban-notice"), ban=activeBan(prefs.player);
+        notice.hidden=!ban;
+        if(ban)notice.textContent=`Spielzugang für „${ban.name}“ gesperrt. Grund: ${ban.reason||"Kein Grund angegeben."}`;
+      }
+      function renderActiveEvents() {
+        const banner=$("#active-event-banner"), active=events.filter(e=>e.active);
+        banner.hidden=!active.length;
+        if(!active.length)return;
+        const first=active[0], hasDouble=active.some(e=>e.type==="double");
+        const bonus=active.filter(e=>(e.type||"bonus")==="bonus").reduce((n,e)=>n+(Number(e.bonus)||0),0);
+        const effects=[hasDouble?"Punkte werden verdoppelt":null,bonus?`+${bonus} Punkte pro Runde`:null].filter(Boolean).join(" · ")||"Event aktiv";
+        banner.innerHTML=`<span style="font-size:23px">📣</span><div><strong>LIVE: ${escapeHtml(first.name)}${active.length>1?` + ${active.length-1} weitere`:""}</strong><span>${effects}</span></div>`;
+      }
+      function bestScore(gameName, player=prefs.player) {
+        return scores.filter(s=>s.game===gameName&&s.player===player).reduce((best,s)=>Math.max(best,s.points),0);
+      }
+      function validSavedMatch(match) {
+        if(!match||!Number.isInteger(match.gameId)||!Array.isArray(match.round?.players)||match.round.players.length!==2)return false;
+        const game=games.find(g=>g.id===match.gameId&&g.multiplayer),r=match.round;
+        if(!game||r.players.some(p=>typeof p!=="string"||!p.trim()||p.length>18)||r.players[0].toLowerCase()===r.players[1].toLowerCase())return false;
+        if(game.mode==="ttt2")return Array.isArray(r.board)&&r.board.length===9&&r.board.every(v=>v===""||v==="X"||v==="O")&&(r.current===0||r.current===1);
+        if(game.mode==="connect4")return Array.isArray(r.board)&&r.board.length===42&&r.board.every(v=>v===""||v==="X"||v==="O")&&(r.current===0||r.current===1);
+        if(game.mode==="memory2"){
+          const symbols=["🍒","🍋","🍇","🍉","🥝","🍊"];
+          return Array.isArray(r.deck)&&r.deck.length===12&&r.deck.every(value=>symbols.includes(value))&&symbols.every(symbol=>r.deck.filter(value=>value===symbol).length===2)&&Array.isArray(r.matched)&&new Set(r.matched).size===r.matched.length&&r.matched.every(i=>Number.isInteger(i)&&i>=0&&i<12)&&Array.isArray(r.open)&&r.open.length<=2&&r.open.every(i=>Number.isInteger(i)&&i>=0&&i<12&&!r.matched.includes(i))&&new Set(r.open).size===r.open.length&&Array.isArray(r.duelScores)&&r.duelScores.length===2&&r.duelScores.every(n=>Number.isInteger(n)&&n>=0&&n<=6)&&Number.isInteger(r.moves)&&r.moves>=0&&(r.current===0||r.current===1);
+        }
+        if(game.mode==="uno"){
+          const u=r.uno,colors=["red","blue","green","yellow","wild"],values=["0","1","2","3","4","5","6","7","8","9","+2","Aussetzen","Richtungswechsel","Farbe","+4"];
+          const card=c=>c&&colors.includes(c.color)&&values.includes(c.value)&&(c.color==="wild"?c.value==="Farbe"||c.value==="+4":c.value!=="Farbe"&&c.value!=="+4");
+          if(!u||!Array.isArray(u.hands)||u.hands.length!==2||!u.hands.every(h=>Array.isArray(h)&&h.every(card))||!Array.isArray(u.drawPile)||!u.drawPile.every(card)||!Array.isArray(u.discard)||!u.discard.length||!u.discard.every(card)||(u.current!==0&&u.current!==1)||!["red","blue","green","yellow"].includes(u.color)||!Array.isArray(u.players)||u.players.length!==2||u.players.some((p,i)=>p!==r.players[i])||typeof u.showHand!=="boolean")return false;
+          const pendingWild=u.pendingWild===null||Number.isInteger(u.pendingWild)&&u.pendingWild>=0&&u.pendingWild<u.hands[u.current].length&&u.hands[u.current][u.pendingWild].color==="wild";
+          const awaitingUno=u.awaitingUno===null||u.awaitingUno&&[0,1].includes(u.awaitingUno.player)&&[0,1].includes(u.awaitingUno.next)&&u.hands[u.awaitingUno.player].length===1;
+          return pendingWild&&awaitingUno;
+        }
+        return false;
+      }
+      function persistMatch() {
+        if(!activeGame?.multiplayer||!round.players||gameFinished)return;
+        const snapshot=JSON.parse(JSON.stringify(round));
+        if(round.matched instanceof Set)snapshot.matched=Array.from(round.matched);
+        savedMatch={gameId:activeGame.id,round:snapshot,updatedAt:Date.now()};
+        if(storage.write("match",savedMatch))renderResumeBanner();
+      }
+      function renderResumeBanner() {
+        const banner=$("#resume-banner");
+        banner.hidden=!validSavedMatch(savedMatch);
+        if(!banner.hidden)$("#resume-description").textContent=`${games.find(g=>g.id===savedMatch.gameId).name} · ${savedMatch.round.players.join(" gegen ")}`;
+      }
+      function resumeSavedMatch() {
+        if(!validSavedMatch(savedMatch)){showToast("Der gespeicherte Spielstand ist ungültig.");return;}
+        const game=games.find(g=>g.id===savedMatch.gameId),r=JSON.parse(JSON.stringify(savedMatch.round));
+        const ban=r.players.map(activeBan).find(Boolean);
+        if(ban){showToast(`${ban.name} ist gesperrt: ${ban.reason||"Bitte den Owner kontaktieren."}`);return;}
+        if(game.mode==="memory2")r.matched=new Set(r.matched);
+        activeGame=game;round=r;gameFinished=false;
+        $("#modal-title").textContent=game.icon+" "+game.name;
+        $("#modal-subtitle").textContent=game.description;
+        $("#modal-best").textContent="Dein Bestwert: "+bestScore(game.name).toLocaleString("de-DE");
+        showModal($("#game-modal"));renderGame();
+      }
+      function renderGames() {
+        const visible = visibleGames();
+        $("#game-total").textContent=games.length;
+        $("#game-count").textContent = visible.length ? visible.length + (visible.length === 1 ? " Spiel" : " Spiele") : "Keine Spiele";
+        if(!visible.length) {
+          grid.innerHTML='<div class="empty-state"><span>🔍</span><strong>Keine passenden Spiele gefunden</strong><p>Ändere den Filter oder setze die Suche zurück.</p><button class="btn small" id="clear-game-filters">Alle Spiele anzeigen</button></div>';
+          $("#clear-game-filters").onclick=()=>{$("#game-search").value="";setActiveFilter("Alle");};
+          return;
+        }
+        grid.innerHTML = visible.map(g => {const best=bestScore(g.name);return `<button class="game-card" data-game="${g.id}" style="--glow:${["#a783ff","#67e6c1","#ffae78","#ff718d"][g.id%4]}"><span class="game-icon">${g.icon}</span><h3>${g.name}</h3><p>${g.description}</p><span class="game-meta"><span>${g.multiplayer?"👥 Pass & Play":g.category}</span>${best?`<span class="best-tag">PB ${best.toLocaleString("de-DE")}</span>`:'<span class="play-label">Spielen ↗</span>'}</span></button>`;}).join("");
+      }
+      function visibleGames() {
+        const query=$("#game-search").value.trim().toLocaleLowerCase("de");
+        return games.filter(g=>(activeFilter==="Alle"||g.category===activeFilter)&&(!query||`${g.name} ${g.description} ${g.category}`.toLocaleLowerCase("de").includes(query)));
+      }
+      function setActiveFilter(filter) {
+        activeFilter=filter;
+        document.querySelectorAll(".filter").forEach(button=>{
+          const active=button.dataset.filter===filter;
+          button.classList.toggle("active",active);
+          button.setAttribute("aria-pressed",String(active));
+        });
+        renderGames();
+      }
+      function renderScores() {
+        const total = scores.filter(s=>s.player===prefs.player).reduce((sum,s)=>sum+s.points,0);
+        $("#score-stat").textContent = total.toLocaleString("de-DE");
+        renderBanNotice();
+        const nameInput=$("#public-player-name");
+        if(nameInput&&nameInput.value!==prefs.player)nameInput.value=prefs.player;
+        const filter=$("#leader-filter");
+        const selected=filter?filter.value:"all";
+        if(filter) {
+          filter.innerHTML='<option value="all">Alle Spiele · Gesamtpunkte</option>'+games.map(g=>`<option value="${g.id}">${escapeHtml(g.name)} · Bestwert</option>`).join("");
+          filter.value=selected==="all"||games.some(g=>String(g.id)===selected)?selected:"all";
+        }
+        const totals={};
+        scores.forEach(s=>{
+          if(filter&&filter.value!=="all"&&s.game!==games[Number(filter.value)]?.name)return;
+          if(filter&&filter.value!=="all")totals[s.player]=Math.max(totals[s.player]||0,s.points);
+          else totals[s.player]=(totals[s.player]||0)+s.points;
+        });
+        const leaders=Object.entries(totals).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,5);
+        $("#leaderboard").innerHTML=leaders.length?leaders.map(([name,score],i)=>`<div class="leader-row"><span class="rank">${String(i+1).padStart(2,"0")}</span><span class="avatar">${["🦊","🐼","🐸","🦉","🐙"][i]}</span><span class="leader-name">${escapeHtml(name)}</span><span class="leader-score">${score.toLocaleString("de-DE")}</span></div>`).join(""):'<div class="empty">Noch keine Punkte. Starte ein Spiel!</div>';
+      }
+      function score(points, game=activeGame, player=prefs.player) {
+        if (!game) return null;
+        const ban=activeBan(player);
+        if(ban){showToast(`${player} ist gesperrt: ${ban.reason||"Zugang gesperrt."}`);return null;}
+        const active=events.filter(e=>e.active);
+        const bonus=active.filter(e=>(e.type||"bonus")==="bonus").reduce((n,e)=>n+(Number(e.bonus)||0),0);
+        const multiplier=active.some(e=>e.type==="double")?2:1;
+        const earned = Math.max(0, Math.round((points + bonus)*multiplier));
+        scores.push({ player, game:game.name, points:earned, at:Date.now() });
+        storage.write("scores",scores); renderScores();renderGames();
+        return earned;
+      }
+      function clearTimer() { if (timer) { clearTimeout(timer); clearInterval(timer); timer=null; } }
+      function openGame(id) {
+        const ban=activeBan(prefs.player);
+        if(ban){showToast(`Zugang gesperrt: ${ban.reason||"Bitte den Owner kontaktieren."}`);renderBanNotice();return;}
+        clearTimer(); activeGame=games.find(g=>g.id===id); gameFinished=false; round={};
+        $("#modal-title").textContent=activeGame.icon+" "+activeGame.name;
+        $("#modal-subtitle").textContent=activeGame.description;
+        $("#modal-best").textContent="Dein Bestwert: "+bestScore(activeGame.name).toLocaleString("de-DE");
+        showModal($("#game-modal")); renderGame();
+      }
+      function finish(points, message, player=prefs.player) {
+        if (gameFinished) return; gameFinished=true; clearTimer();
+        if(savedMatch&&activeGame&&savedMatch.gameId===activeGame.id){savedMatch=null;storage.write("match",null);renderResumeBanner();}
+        const earned=score(points,activeGame,player);
+        area.innerHTML=`<div class="game-icon">🏁</div><h3>${escapeHtml(message || "Runde beendet!")}</h3><p>${earned===null?"Keine Punkte: Spieler gesperrt.":`${escapeHtml(player)} erhält ${earned} Punkte.`}</p><div class="game-controls"><button class="btn primary" id="play-again">Nochmal spielen</button></div>`;
+        $("#play-again").onclick=()=>openGame(activeGame.id);
+      }
+      function renderGame() {
+        clearTimer(); gameFinished=false;
+        const mode=activeGame.mode;
+        if(activeGame.multiplayer&&!round.players) {
+          area.innerHTML=`<h3>👥 Pass &amp; Play</h3><p>Spielt abwechselnd auf diesem Gerät.</p><div class="admin-grid" style="width:min(100%,420px)"><label>Spieler 1<input id="local-player-one" maxlength="18" value="${escapeHtml(prefs.player)}"></label><label>Spieler 2<input id="local-player-two" maxlength="18" value="Mitspieler"></label></div><p id="local-setup-error" style="color:#ff8494"></p><button class="btn primary" id="local-start">Spiel starten</button>`;
+          $("#local-start").onclick=()=>{const first=$("#local-player-one").value.trim(),second=$("#local-player-two").value.trim(),error=$("#local-setup-error");if(!first||!second||first.toLowerCase()===second.toLowerCase()){error.textContent="Bitte zwei unterschiedliche Spielernamen eingeben.";return;}const firstBan=activeBan(first),secondBan=activeBan(second);if(firstBan||secondBan){const ban=firstBan||secondBan;error.textContent=`${ban.name} ist gesperrt: ${ban.reason||"Bitte den Owner kontaktieren."}`;return;}round.players=[first,second];round.current=0;renderGame();};
+          renderGameOwnerControls();return;
+        }
+        if (mode==="click") {
+          let n=0, left=10;
+          area.innerHTML=`<h3>10 Sekunden – so oft tippen wie möglich!</h3><p>Jeder Klick bringt einen Punkt.</p><div class="game-controls"><button class="btn primary" id="tap">Tippen! <b id="tap-count">0</b></button></div><p id="timer-label">⏱ 10 Sekunden</p>`;
+          $("#tap").onclick=()=>{ if (gameFinished) return; n++; $("#tap-count").textContent=n; };
+          timer=setInterval(()=>{left--;$("#timer-label").textContent="⏱ "+left+" Sekunden";if(left<=0)finish(n*10,"Zeit ist um!");},1000);
+        } else if (mode==="target") {
+          let hits=0,left=15;
+          area.innerHTML=`<h3>Triff das Ziel!</h3><p>Es bewegt sich nach jedem Treffer. Du hast 15 Sekunden.</p><div class="target-arena"><button class="target-dot" id="target-dot" aria-label="Ziel treffen"></button></div><p id="target-status">Treffer: 0 · 15 Sekunden</p>`;
+          $("#target-dot").onclick=()=>{hits++;const button=$("#target-dot");button.style.left=(8+Math.random()*84)+"%";button.style.top=(12+Math.random()*76)+"%";$("#target-status").textContent="Treffer: "+hits+" · "+left+" Sekunden";};
+          timer=setInterval(()=>{left--;$("#target-status").textContent="Treffer: "+hits+" · "+left+" Sekunden";if(left<=0)finish(hits*15,"Zielrunde beendet!");},1000);
+        } else if (mode==="mole") {
+          let hits=0,left=15,active=Math.floor(Math.random()*9);
+          const draw=()=>{area.innerHTML=`<h3>Whack-a-Mole!</h3><p>Triff den Maulwurf, sobald er auftaucht.</p><div class="mole-grid">${Array.from({length:9},(_,i)=>`<button data-hole="${i}" class="${i===active?"active":""}" aria-label="${i===active?"Maulwurf":"Leeres Loch"}">${i===active?"🐹":"🕳️"}</button>`).join("")}</div><p id="mole-status">Treffer: ${hits} · ${left} Sekunden</p>`;area.querySelectorAll("[data-hole]").forEach(b=>b.onclick=()=>{if(Number(b.dataset.hole)!==active)return;hits++;let next=active;while(next===active)next=Math.floor(Math.random()*9);active=next;draw();});};
+          draw();timer=setInterval(()=>{left--;const status=$("#mole-status");if(status)status.textContent="Treffer: "+hits+" · "+left+" Sekunden";if(left<=0)finish(hits*15,"Spiel vorbei!");},1000);
+        } else if (mode==="guess") {
+          round.answer=Math.floor(Math.random()*30)+1; round.tries=0;
+          area.innerHTML=`<h3>Ich denke an eine Zahl von 1 bis 30.</h3><p id="hint">Kannst du sie erraten?</p><div class="game-controls"><input id="guess-input" type="number" min="1" max="30" placeholder="Dein Tipp" aria-label="Dein Tipp"><button class="btn primary" id="guess">Raten</button></div>`;
+          $("#guess").onclick=()=>{const v=Number($("#guess-input").value); if(!v||v<1||v>30){showToast("Bitte eine Zahl von 1 bis 30 eingeben.");return;} round.tries++; if(v===round.answer)finish(Math.max(20,120-round.tries*10),"Richtig geraten!");else $("#hint").textContent=v<round.answer?"Zu niedrig – versuch's nochmal!":"Zu hoch – versuch's nochmal!";};
+          $("#guess-input").onkeydown=e=>{if(e.key==="Enter")$("#guess").click();};
+        } else if (mode==="rps") {
+          let player=prefs.player;
+          area.innerHTML=`<h3>Wähle deinen Zug</h3><p>Gewinne die Runde und kassiere Punkte.</p><div class="game-controls">${["✊ Stein","✋ Papier","✌️ Schere"].map((x,i)=>`<button class="btn choice" data-choice="${i}">${x}</button>`).join("")}</div><p id="rps-result"></p>`;
+          area.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{let you=Number(b.dataset.choice),cpu=Math.floor(Math.random()*3), diff=(you-cpu+3)%3;$("#rps-result").textContent="Du: "+["Stein","Papier","Schere"][you]+" · Computer: "+["Stein","Papier","Schere"][cpu];if(diff===0)showToast("Unentschieden – noch eine Runde!");else finish(diff===1?100:10,diff===1?"Du gewinnst!":"Diesmal gewinnt der Computer.");});
+        } else if (mode==="mines") {
+          const size=5,mineCount=5;
+          round.mines=new Set();
+          while(round.mines.size<mineCount)round.mines.add(Math.floor(Math.random()*size*size));
+          round.revealed=new Set();
+          const adjacent=(index)=>{let r=Math.floor(index/size),c=index%size,count=0;for(let y=-1;y<=1;y++)for(let x=-1;x<=1;x++){if(!x&&!y)continue;const row=r+y,col=c+x;if(row>=0&&row<size&&col>=0&&col<size&&round.mines.has(row*size+col))count++;}return count;};
+          const draw=()=>{area.innerHTML=`<h3>Finde alle sicheren Felder</h3><p>${mineCount} Minen verstecken sich im Raster.</p><div class="cell-grid" id="mine-grid" style="grid-template-columns:repeat(5,48px)">${Array.from({length:size*size},(_,i)=>`<button data-mine-cell="${i}" aria-label="${round.revealed.has(i)?(round.mines.has(i)?"Mine":"Sicheres Feld"): "Verdecktes Feld"}" style="width:48px;height:48px">${round.revealed.has(i)?(round.mines.has(i)?"💣":adjacent(i)||"✓"):"?"}</button>`).join("")}</div><p>Sichere Felder: ${round.revealed.size} / ${size*size-mineCount}</p>`;area.querySelectorAll("[data-mine-cell]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.mineCell);if(round.revealed.has(i))return;if(round.mines.has(i)){finish(0,"Bumm! Du hast eine Mine erwischt.");return;}round.revealed.add(i);if(round.revealed.size===size*size-mineCount){finish(180,"Alle Minen umgangen!");return;}draw();});};
+          draw();
+        } else if (mode==="memory") {
+          const symbols=activeGame.name==="Memory Sprint"?["🍒","🍋","🍇","🍉"]:["🍒","🍋","🍇","🍉","🥝","🍊","🍓","🍍"], deck=[...symbols,...symbols].sort(()=>Math.random()-.5);
+          round.open=[];round.matched=new Set();round.moves=0;
+          area.innerHTML=`<h3>Finde alle passenden Paare</h3><p>Weniger Züge bringen mehr Punkte.</p><div class="cell-grid" id="memory-grid">${deck.map((_,i)=>`<button data-index="${i}" aria-label="Verdeckte Karte">?</button>`).join("")}</div><p id="moves">Züge: 0</p>`;
+          area.querySelectorAll("#memory-grid button").forEach(b=>b.onclick=()=>{let i=Number(b.dataset.index);if(round.matched.has(i)||round.open.includes(i)||round.open.length===2)return;b.textContent=deck[i];round.open.push(i);if(round.open.length===2){round.moves++;$("#moves").textContent="Züge: "+round.moves;let [a,c]=round.open;if(deck[a]===deck[c]){round.matched.add(a);round.matched.add(c);round.open=[];if(round.matched.size===deck.length)finish(Math.max(30,180-round.moves*8),"Alle Paare gefunden!");}else setTimeout(()=>{if(!area.isConnected)return;area.querySelectorAll("#memory-grid button")[a].textContent="?";area.querySelectorAll("#memory-grid button")[c].textContent="?";round.open=[];},650);}});
+        } else if (mode==="memory2") {
+          const symbols=["🍒","🍋","🍇","🍉","🥝","🍊"];
+          if(!Array.isArray(round.deck)||round.deck.length!==symbols.length*2)round.deck=[...symbols,...symbols].sort(()=>Math.random()-.5);
+          const deck=round.deck;
+          if(!Array.isArray(round.open))round.open=[];if(!(round.matched instanceof Set))round.matched=new Set(round.matched||[]);if(!Number.isFinite(round.moves))round.moves=0;if(!Array.isArray(round.duelScores))round.duelScores=[0,0];if(round.open.length===2){round.open=[];round.current=1-round.current;}
+          const draw=()=>{persistMatch();area.innerHTML=`<h3>${escapeHtml(round.players[round.current])} ist dran</h3><p>${escapeHtml(round.players[0])}: ${round.duelScores[0]} Paare · ${escapeHtml(round.players[1])}: ${round.duelScores[1]} Paare</p><div class="cell-grid" id="memory-grid">${deck.map((_,i)=>`<button data-index="${i}" aria-label="${round.matched.has(i)?"Gefunden":round.open.includes(i)?deck[i]:"Verdeckte Karte"}">${round.matched.has(i)||round.open.includes(i)?deck[i]:"?"}</button>`).join("")}</div><p>Züge: ${round.moves}</p>`;area.querySelectorAll("#memory-grid button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.index);if(round.matched.has(i)||round.open.includes(i)||round.open.length===2)return;round.open.push(i);if(round.open.length===2){round.moves++;const [a,c]=round.open;if(deck[a]===deck[c]){round.matched.add(a);round.matched.add(c);round.duelScores[round.current]++;round.open=[];if(round.matched.size===deck.length){const winner=round.duelScores[0]===round.duelScores[1]?-1:round.duelScores[0]>round.duelScores[1]?0:1;if(winner<0)finish(0,"Unentschieden!");else finish(100+round.duelScores[winner]*20,`${round.players[winner]} gewinnt das Memory-Duell!`,round.players[winner]);return;}draw();}else{const thisRound=round;draw();setTimeout(()=>{if(round!==thisRound)return;round.open=[];round.current=1-round.current;draw();},700);return;}}draw();});};
+          draw();
+        } else if (mode==="ttt2") {
+          if(!Array.isArray(round.board)||round.board.length!==9){round.board=Array(9).fill("");round.current=0;}
+          const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+          const check=()=>wins.find(line=>round.board[line[0]]&&line.every(i=>round.board[i]===round.board[line[0]]));
+          const draw=()=>{persistMatch();area.innerHTML=`<h3>${escapeHtml(round.players[round.current])} ist dran · ${round.current===0?"❌":"⭕"}</h3><p>Spielt abwechselnd – drei in einer Reihe gewinnt.</p><div class="cell-grid ttt" id="ttt-grid">${round.board.map((v,i)=>`<button data-index="${i}" aria-label="Feld ${i+1}">${v==="X"?"❌":v==="O"?"⭕":""}</button>`).join("")}</div>`;area.querySelectorAll("#ttt-grid button").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.index);if(round.board[i]||gameFinished)return;round.board[i]=round.current===0?"X":"O";if(check()){const winner=round.current;finish(100,`${round.players[winner]} gewinnt!`,round.players[winner]);return;}if(round.board.every(Boolean)){finish(0,"Unentschieden!");return;}round.current=1-round.current;draw();});};
+          draw();
+        } else if (mode==="sequence") {
+          const seq=Array.from({length:5},()=>Math.floor(Math.random()*4));
+          area.innerHTML=`<h3>Merke dir diese Reihenfolge</h3><div id="sequence-display" style="font-size:34px;letter-spacing:8px">${seq.map(x=>["🔴","🔵","🟢","🟡"][x]).join("")}</div><p>Gib die Farben in derselben Reihenfolge ein.</p><div class="game-controls">${["🔴","🔵","🟢","🟡"].map((x,i)=>`<button class="btn" data-seq="${i}">${x}</button>`).join("")}<button class="btn primary" id="seq-submit">Fertig</button></div><p id="seq-entry">Deine Folge: –</p>`;
+          round.seq=seq;round.entry=[];
+          const sequenceRound=round;timer=setTimeout(()=>{if(round===sequenceRound){$("#sequence-display").textContent="❔ ❔ ❔ ❔ ❔";timer=null;}},1800);
+          area.querySelectorAll("[data-seq]").forEach(b=>b.onclick=()=>{if(round.entry.length<seq.length){round.entry.push(Number(b.dataset.seq));$("#seq-entry").textContent="Deine Folge: "+round.entry.map(x=>["🔴","🔵","🟢","🟡"][x]).join(" ");}});
+          $("#seq-submit").onclick=()=>finish(round.entry.join(",")===seq.join(",")?150:0,round.entry.join(",")===seq.join(",")?"Perfekt gemerkt!":"Fast – nächstes Mal klappt's!");
+        } else if (mode==="numbermix") {
+          const a=Math.floor(Math.random()*9)+2,b=Math.floor(Math.random()*9)+2,answer=a+b,choices=new Set([answer]);
+          while(choices.size<4){const option=answer+Math.floor(Math.random()*13)-6;if(option>0)choices.add(option);}
+          area.innerHTML=`<h3>${a} + ${b} = ?</h3><p>Wähle das passende Ergebnis aus vier Zahlen.</p><div class="game-controls">${Array.from(choices).sort((x,y)=>x-y).map(value=>`<button class="btn number-choice" data-number-answer="${value}">${value}</button>`).join("")}</div>`;
+          area.querySelectorAll(".number-choice").forEach(button=>button.onclick=()=>{const correct=Number(button.dataset.numberAnswer)===answer;finish(correct?120:0,correct?"Richtig gemischt!":`Noch nicht – das Ergebnis ist ${answer}.`);});
+        } else if (mode==="math") {
+          const a=Math.floor(Math.random()*15)+4,b=Math.floor(Math.random()*12)+2;
+          round.answer=a+b; area.innerHTML=`<h3>Wie viel ist ${a} + ${b}?</h3><p>Rechne im Kopf und gib deine Antwort ein.</p><div class="game-controls"><input id="math-input" type="number" placeholder="Antwort" aria-label="Antwort"><button class="btn primary" id="math-submit">Prüfen</button></div>`;
+          $("#math-submit").onclick=()=>{let ok=Number($("#math-input").value)===round.answer;finish(ok?100:0,ok?"Richtig gerechnet!":"Die Antwort war "+round.answer+".");};
+          $("#math-input").onkeydown=e=>{if(e.key==="Enter")$("#math-submit").click();};
+        } else if (mode==="word") {
+          const words=["PLANET","KOMET","GALAXIE","KOSMOS","STERN"], word=words[Math.floor(Math.random()*words.length)];
+          round.word=word;round.used=[];
+          area.innerHTML=`<h3>Errate das Wort</h3><p>Das Wort hat ${word.length} Buchstaben. Du hast 6 Fehlversuche.</p><div style="font-size:26px;letter-spacing:7px" id="word-show">${"_ ".repeat(word.length)}</div><div class="game-controls"><input id="letter" maxlength="1" placeholder="Buchstabe" aria-label="Buchstabe"><button class="btn primary" id="letter-submit">Prüfen</button></div><p id="word-hint">Verwendet: –</p>`;
+          const guessLetter=()=>{let ch=$("#letter").value.trim().toUpperCase();$("#letter").value="";if(!/^[A-ZÄÖÜ]$/.test(ch)||round.used.includes(ch))return;round.used.push(ch);let hits=word.includes(ch);if(!hits)round.misses=(round.misses||0)+1;let shown=[...word].map(x=>round.used.includes(x)?x:"_").join(" ");$("#word-show").textContent=shown;$("#word-hint").textContent="Verwendet: "+round.used.join(", ");if(!shown.includes("_"))finish(130,"Wort erraten!");else if(round.misses>=6)finish(0,"Das Wort war "+word+".");};
+          $("#letter-submit").onclick=guessLetter;$("#letter").onkeydown=e=>{if(e.key==="Enter")guessLetter();};
+        } else if (mode==="scramble") {
+          const words=["PLANET","KOMET","GALAXIE","KOSMOS","STERN"], word=words[Math.floor(Math.random()*words.length)];
+          let scrambled=word.split("").sort(()=>Math.random()-.5).join("");if(scrambled===word)scrambled=word.slice(1)+word[0];
+          round.answer=word;
+          area.innerHTML=`<h3>Entwirre die Buchstaben</h3><div style="font-size:30px;letter-spacing:6px">${scrambled}</div><p>Welches Wort versteckt sich darin?</p><div class="game-controls"><input id="scramble-input" maxlength="12" placeholder="Deine Lösung" aria-label="Deine Lösung"><button class="btn primary" id="scramble-submit">Prüfen</button></div>`;
+          const solve=()=>{const correct=$("#scramble-input").value.trim().toUpperCase()===word;finish(correct?120:0,correct?"Richtig entwirrt!":"Gesucht war "+word+".");};
+          $("#scramble-submit").onclick=solve;$("#scramble-input").onkeydown=e=>{if(e.key==="Enter")solve();};
+        } else if (mode==="coin") {
+          const result=Math.random()<.5?"Kopf":"Zahl";
+          area.innerHTML=`<h3>Was zeigt die Münze?</h3><p>Wähle Kopf oder Zahl.</p><div class="game-controls"><button class="btn" data-coin="Kopf">🙂 Kopf</button><button class="btn" data-coin="Zahl">🔢 Zahl</button></div>`;
+          area.querySelectorAll("[data-coin]").forEach(b=>b.onclick=()=>finish(b.dataset.coin===result?100:0,b.dataset.coin===result?"Richtig – "+result+"!":"Es war "+result+"."));
+        } else if (mode==="lights") {
+          const size=4;round.lights=Array.from({length:size*size},()=>Math.random()<.35);if(round.lights.every(Boolean)||round.lights.every(v=>!v))round.lights[5]=true;
+          round.moves=0;
+          const draw=()=>{area.innerHTML=`<h3>Schalte alle Lichter aus</h3><p>Jeder Klick schaltet das Feld und seine Nachbarn um.</p><div class="cell-grid" id="lights-grid">${round.lights.map((on,i)=>`<button data-light="${i}" style="background:${on?"#e8c85b":"#ffffff0a"};color:${on?"#211b0d":"#a8abb8"}" aria-label="Licht ${i+1} ${on?"an":"aus"}">${on?"●":"○"}</button>`).join("")}</div><p id="light-moves">Züge: ${round.moves}</p>`;area.querySelectorAll("[data-light]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.light),r=Math.floor(i/size),c=i%size;[[r,c],[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([y,x])=>{if(y>=0&&y<size&&x>=0&&x<size)round.lights[y*size+x]=!round.lights[y*size+x];});round.moves++;if(round.lights.every(v=>!v)){finish(Math.max(20,150-round.moves*5),"Alle Lichter aus!");return;}draw();});};
+          draw();
+        } else if (mode==="connect4") {
+          const rows=6,cols=7;if(!Array.isArray(round.board)||round.board.length!==rows*cols){round.board=Array(rows*cols).fill("");round.current=0;}
+          const win=(player)=>{for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){if(round.board[r*cols+c]!==player)continue;for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]]){let count=1;for(let n=1;n<4;n++){let y=r+dr*n,x=c+dc*n;if(y<0||y>=rows||x<0||x>=cols||round.board[y*cols+x]!==player)break;count++;}if(count===4)return true;}}return false;};
+          const draw=()=>{persistMatch();area.innerHTML=`<h3>${escapeHtml(round.players[round.current])} ist dran · ${round.current===0?"🔴":"🟡"}</h3><p>Wähle eine Spalte. Spielt abwechselnd auf diesem Gerät.</p><div class="cell-grid" id="connect-grid" style="grid-template-columns:repeat(7,38px);gap:4px">${round.board.map((v,i)=>`<button data-cell="${i}" aria-label="Feld ${i+1}" style="width:38px;height:38px;font-size:16px">${v==="X"?"🔴":v==="O"?"🟡":""}</button>`).join("")}</div>`;area.querySelectorAll("[data-cell]").forEach(b=>b.onclick=()=>{if(gameFinished)return;const col=Number(b.dataset.cell)%cols;let row=rows-1;while(row>=0&&round.board[row*cols+col])row--;if(row<0)return;const marker=round.current===0?"X":"O",player=round.players[round.current];round.board[row*cols+col]=marker;if(win(marker)){finish(150,`${player} verbindet vier!`,player);return;}if(round.board.every(Boolean)){finish(0,"Unentschieden!");return;}round.current=1-round.current;draw();});};
+          draw();
+        } else if (mode==="uno") {
+          const colors=["red","blue","green","yellow"];
+          let uno=round.uno;
+          if(!uno){
+            const values=["1","2","3","4","5","6","7","8","9","+2","Aussetzen","Richtungswechsel"],deck=[];
+            colors.forEach(color=>{deck.push({color,value:"0"});values.forEach(value=>{deck.push({color,value},{color,value});});});
+            for(let i=0;i<4;i++){deck.push({color:"wild",value:"Farbe"},{color:"wild",value:"+4"});}
+            for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+            const hands=[deck.splice(0,7),deck.splice(0,7)];
+            let startIndex=deck.findIndex(card=>/^\d$/.test(card.value));if(startIndex<0)startIndex=0;
+            const first=deck.splice(startIndex,1)[0];
+            uno=round.uno={players:round.players,hands,drawPile:deck,discard:[first],color:first.color,current:0,showHand:false,pendingWild:null,awaitingUno:null};
+          }
+          const cardValue=card=>card.value==="+4"?50:card.value==="+2"||card.value==="Aussetzen"||card.value==="Richtungswechsel"?20:card.value==="Farbe"?50:Number(card.value)||0;
+          const refill=()=>{if(uno.drawPile.length)return;const top=uno.discard.pop();uno.drawPile=uno.discard.splice(0);uno.discard=[top];for(let i=uno.drawPile.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[uno.drawPile[i],uno.drawPile[j]]=[uno.drawPile[j],uno.drawPile[i]];}};
+          const drawCards=(player,count)=>{for(let i=0;i<count;i++){refill();if(uno.drawPile.length)uno.hands[player].push(uno.drawPile.pop());}};
+          const playable=card=>card.color==="wild"||card.color===uno.color||card.value===uno.discard[uno.discard.length-1].value;
+          const renderUno=()=>{
+            persistMatch();
+            if(uno.awaitingUno){area.innerHTML=`<div class="uno-table"><h3>${escapeHtml(uno.players[uno.awaitingUno.player])}: UNO rufen!</h3><p>Du hast nur noch eine Karte. Rufe UNO, bevor der Zug weitergeht.</p><button class="btn primary" id="call-uno">UNO!</button></div>`;$("#call-uno").onclick=()=>{uno.current=uno.awaitingUno.next;uno.awaitingUno=null;uno.showHand=false;renderUno();};return;}
+            if(!uno.showHand){area.innerHTML=`<div class="uno-table"><h3>🎴 ${escapeHtml(uno.players[uno.current])} ist am Zug</h3><p>Spieler 1: ${uno.hands[0].length} Karten · Spieler 2: ${uno.hands[1].length} Karten</p><p>Gebt das Gerät weiter, dann die Hand aufdecken.</p><button class="btn primary" id="reveal-uno">Hand anzeigen</button></div>`;$("#reveal-uno").onclick=()=>{uno.showHand=true;renderUno();};return;}
+            const current=uno.current,top=uno.discard[uno.discard.length-1];
+            area.innerHTML=`<div class="uno-table"><div class="uno-top"><span>🎴 ${escapeHtml(uno.players[current])} · ${uno.hands[current].length} Karten</span><span>${escapeHtml(uno.players[1-current])}: ${uno.hands[1-current].length} Karten</span></div><div class="uno-discard uno-${top.color}">${escapeHtml(top.value)}</div><p>Farbe: ${uno.color==="red"?"Rot":uno.color==="blue"?"Blau":uno.color==="green"?"Grün":"Gelb"}</p>${uno.pendingWild!==null?`<p>Farbe wählen:</p><div class="game-controls">${colors.map(color=>`<button class="btn" data-uno-color="${color}">${color==="red"?"🔴 Rot":color==="blue"?"🔵 Blau":color==="green"?"🟢 Grün":"🟡 Gelb"}</button>`).join("")}</div>`:`<div class="uno-hand">${uno.hands[current].map((card,i)=>`<button class="uno-card uno-${card.color}" data-uno-card="${i}" ${playable(card)?"":"disabled"} aria-label="${escapeHtml(card.color)} ${escapeHtml(card.value)}">${escapeHtml(card.value)}</button>`).join("")}</div><div class="game-controls"><button class="btn" id="draw-uno">＋ Karte ziehen</button></div>`}</div>`;
+            area.querySelectorAll("[data-uno-card]").forEach(button=>button.onclick=()=>{const index=Number(button.dataset.unoCard),card=uno.hands[current][index];if(!card||!playable(card))return;if(card.color==="wild"){uno.pendingWild=index;renderUno();return;}playUnoCard(index,card.color);});
+            area.querySelectorAll("[data-uno-color]").forEach(button=>button.onclick=()=>{const index=uno.pendingWild;uno.pendingWild=null;playUnoCard(index,button.dataset.unoColor);});
+            const drawButton=$("#draw-uno");if(drawButton)drawButton.onclick=()=>{drawCards(current,1);uno.current=1-current;uno.showHand=false;renderUno();};
+          };
+          const playUnoCard=(index,chosenColor)=>{
+            const player=uno.current,card=uno.hands[player].splice(index,1)[0];if(!card)return;
+            uno.discard.push(card);uno.color=card.color==="wild"?chosenColor:card.color;
+            if(!uno.hands[player].length){const points=uno.hands[1-player].reduce((sum,c)=>sum+cardValue(c),0);finish(100+points,`${uno.players[player]} gewinnt das UNO-Duell!`,uno.players[player]);return;}
+            let next=1-player;
+            if(card.value==="+2"){drawCards(next,2);next=player;}
+            else if(card.value==="+4"){drawCards(next,4);next=player;}
+            else if(card.value==="Aussetzen"||card.value==="Richtungswechsel")next=player;
+            if(uno.hands[player].length===1){uno.awaitingUno={player,next};uno.showHand=true;renderUno();return;}
+            uno.current=next;uno.showHand=false;renderUno();
+          };
+          renderUno();
+        } else if (mode==="quiz") {
+          const questions=[["Welcher Planet ist als roter Planet bekannt?","Mars",["Venus","Mars","Jupiter"]],["Wie viele Seiten hat ein Würfel?","6",["4","6","8"]],["Was ist die Hauptstadt von Frankreich?","Paris",["Rom","Paris","Madrid"]]];
+          const q=questions[Math.floor(Math.random()*questions.length)];
+          area.innerHTML=`<h3>${q[0]}</h3><div class="game-controls">${q[2].map(x=>`<button class="btn quiz-answer" data-answer="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("")}</div>`;
+          area.querySelectorAll(".quiz-answer").forEach(b=>b.onclick=()=>finish(b.dataset.answer===q[1]?100:0,b.dataset.answer===q[1]?"Richtig!":"Richtige Antwort: "+q[1]));
+        } else if (mode==="color-reflex") {
+          area.innerHTML=`<h3>Farb-Reflex</h3><p>Warte auf Grün und klicke so schnell du kannst.</p><button class="reflex-pad" id="reflex-pad">Warte auf Grün …</button><p>Ein Klick vor dem Farbwechsel zählt als Fehlstart.</p>`;
+          const pad=$("#reflex-pad");let readyAt=0;
+          pad.onclick=()=>{if(!readyAt){clearTimer();finish(0,"Fehlstart! Warte auf Grün.");return;}const ms=Math.max(1,Math.round(performance.now()-readyAt));finish(Math.max(10,Math.round(5000/ms)),`Reaktionszeit: ${ms} ms`);};
+          timer=setTimeout(()=>{readyAt=performance.now();pad.classList.add("ready");pad.textContent="JETZT KLICKEN!";timer=null;},1200+Math.random()*2400);
+        } else if (mode==="reaction") {
+          area.innerHTML=`<h3>Bereit?</h3><p>Klicke erst, wenn das Feld grün wird.</p><button class="btn primary" id="react" style="min-width:190px;height:80px">Start</button><p id="reaction-msg"></p>`;
+          const btn=$("#react");let ready=false;btn.onclick=()=>{if(!round.started){round.started=true;btn.textContent="Warte…";btn.classList.remove("primary");timer=setTimeout(()=>{ready=true;btn.textContent="JETZT!";btn.style.background="#3ecb91";round.stamp=Date.now();},1200+Math.random()*2400);}else if(!ready){clearTimer();btn.textContent="Zu früh! Nochmal versuchen";round.started=false;}else{const elapsed=Math.max(1,Date.now()-round.stamp);finish(Math.max(10,Math.round(5000/elapsed)),"Reaktionszeit: "+elapsed+" ms");}};
+        }
+        renderGameOwnerControls();
+      }
+      function renderGameOwnerControls() {
+        const el=$("#game-owner-controls");
+        if(!ownerUnlocked){el.hidden=true;return;}
+        el.hidden=false;
+        el.innerHTML=`<h3>Owner-Tools</h3><p>Lokale Spieltest-Funktionen. Punkte werden in deinem Browser eingetragen.</p><div class="owner-tools"><button class="owner-tool" id="cheat-win">⚡ Runde abschließen</button><button class="owner-tool" id="cheat-score">✦ +500 Punkte</button></div>`;
+        $("#cheat-win").onclick=()=>finish(500,"Owner-Bonus aktiviert!");
+        $("#cheat-score").onclick=()=>{score(500);showToast("+500 Owner-Punkte eingetragen.");};
+      }
+      function exportBackup() {
+        const data={version:1,exportedAt:new Date().toISOString(),scores,prefs,events,bans,match:savedMatch};
+        const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+        const link=document.createElement("a");
+        link.href=url;link.download="vexil-backup-"+new Date().toISOString().slice(0,10)+".json";
+        document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+        $("#backup-status").textContent="Backup wurde heruntergeladen.";
+      }
+      function importBackup(file) {
+        if(file.size>2*1024*1024){showToast("Backup ist zu groß (maximal 2 MB).");return;}
+        const reader=new FileReader();
+        reader.onerror=()=>{showToast("Backup-Datei konnte nicht gelesen werden.");};
+        reader.onload=()=>{
+          try {
+            const data=JSON.parse(String(reader.result));
+            const validScores=Array.isArray(data.scores)&&data.scores.length<=50000&&data.scores.every(s=>s&&typeof s.player==="string"&&s.player.length<=18&&typeof s.game==="string"&&s.game.length<=80&&Number.isFinite(s.points)&&s.points>=0);
+            const validEvents=Array.isArray(data.events)&&data.events.length<=50&&data.events.every(e=>e&&typeof e.name==="string"&&e.name.trim().length>0&&e.name.length<=36&&typeof e.active==="boolean"&&(e.type===undefined||e.type==="bonus"||e.type==="double")&&Number.isFinite(Number(e.bonus||0))&&Number(e.bonus||0)>=0&&Number(e.bonus||0)<=500);
+            const validBans=Array.isArray(data.bans)&&data.bans.length<=10000&&data.bans.every(b=>b&&typeof b.name==="string"&&b.name.trim().length>0&&b.name.length<=18&&(b.reason===undefined||typeof b.reason==="string")&&(b.expiresAt===null||b.expiresAt===undefined||Number.isFinite(b.expiresAt)));
+            const validPrefs=data.prefs&&typeof data.prefs.player==="string"&&data.prefs.player.trim().length>0&&data.prefs.player.length<=18&&themes.some(t=>t[0]===data.prefs.theme);
+            const validMatch=data.match===undefined||data.match===null||validSavedMatch(data.match);
+            if(data.version!==1||!validScores||!validEvents||!validBans||!validPrefs||!validMatch)throw new Error("Backup-Format oder Daten sind ungültig.");
+            const writes=[storage.write("scores",data.scores),storage.write("prefs",data.prefs),storage.write("events",data.events),storage.write("bans",data.bans),storage.write("match",data.match||null)];
+            if(writes.some(ok=>!ok))throw new Error("Daten konnten nicht vollständig gespeichert werden.");
+            scores=data.scores;prefs=data.prefs;events=data.events;bans=data.bans;savedMatch=data.match||null;
+            document.body.dataset.theme=prefs.theme;
+            document.querySelectorAll(".theme-btn").forEach(button=>{const active=button.dataset.theme===prefs.theme||button.dataset.ownerTheme===prefs.theme;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
+            renderScores();renderGames();renderActiveEvents();renderResumeBanner();renderOwnerPanel();
+            $("#backup-status").textContent="Backup erfolgreich importiert.";
+            showToast("Backup wurde wiederhergestellt.");
+          } catch(error) {
+            $("#backup-status").textContent=error.message||"Backup konnte nicht importiert werden.";
+            showToast("Backup ungültig oder nicht speicherbar.");
+          }
+          const input=$("#import-data");if(input)input.value="";
+        };
+        reader.readAsText(file);
+      }
+      function showModal(modal) {
+        if(!modal.classList.contains("open"))modalReturnFocus.set(modal,document.activeElement);
+        modal.classList.add("open");
+        modal.querySelector("[data-close]")?.focus();
+      }
+      function closeModal(modal) {
+        modal.classList.remove("open");
+        if(modal.id==="game-modal")clearTimer();
+        const returnFocus=modalReturnFocus.get(modal);
+        if(returnFocus?.isConnected&&returnFocus.offsetParent!==null)returnFocus.focus();
+      }
+      document.addEventListener("click",e=>{
+        const card=e.target.closest("[data-game]");if(card)openGame(Number(card.dataset.game));
+        if(e.target.matches("[data-close]"))closeModal(e.target.closest(".modal-backdrop"));
+        if(e.target.classList.contains("modal-backdrop"))closeModal(e.target);
+      });
+      document.addEventListener("keydown",e=>{
+        if(e.key==="Escape"){document.querySelectorAll(".modal-backdrop.open").forEach(closeModal);return;}
+        if(e.key!=="Tab")return;
+        const modal=Array.from(document.querySelectorAll(".modal-backdrop.open")).pop();
+        if(!modal)return;
+        const focusable=Array.from(modal.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex]:not([tabindex="-1"])')).filter(el=>!el.hidden&&el.offsetParent!==null);
+        if(!focusable.length){e.preventDefault();return;}
+        const first=focusable[0],last=focusable[focusable.length-1],outside=!modal.contains(document.activeElement);
+        if(e.shiftKey&&(document.activeElement===first||outside)){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&(document.activeElement===last||outside)){e.preventDefault();first.focus();}
+      });
+      document.querySelectorAll(".filter").forEach(button=>button.onclick=()=>setActiveFilter(button.dataset.filter));
+      $("#game-search").oninput=renderGames;
+      $("#quick-play").onclick=()=>{const choices=visibleGames();if(!choices.length){showToast("In dieser Auswahl gibt es kein Spiel.");return;}openGame(choices[Math.floor(Math.random()*choices.length)].id);};
+      document.querySelectorAll(".theme-btn").forEach(b=>b.onclick=()=>{
+        prefs.theme=b.dataset.theme;document.body.dataset.theme=prefs.theme;
+        document.querySelectorAll(".theme-btn").forEach(x=>{const active=x===b;x.classList.toggle("active",active);x.setAttribute("aria-pressed",String(active));});
+        storage.write("prefs",prefs);
+      });
+      $("#public-player-name").onchange=()=>{const value=$("#public-player-name").value.trim();if(!value){$("#public-player-name").value=prefs.player;return;}prefs.player=value;storage.write("prefs",prefs);renderScores();renderGames();};
+      $("#leader-filter").onchange=renderScores;
+      $("#resume-game").onclick=resumeSavedMatch;
+      $("#discard-resume").onclick=()=>{savedMatch=null;storage.write("match",null);renderResumeBanner();showToast("Gespeicherter Spielstand gelöscht.");};
+      document.body.dataset.theme=prefs.theme;
+      document.querySelectorAll(".theme-btn").forEach(b=>{const active=b.dataset.theme===prefs.theme;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));});
+      $("#owner-open").onclick=()=>{renderOwnerPanel();showModal($("#owner-modal"));};
+      function renderOwnerPanel() {
+        const box=$("#owner-content");
+        if(!ownerUnlocked) {
+          box.innerHTML=`<div class="game-area"><h3>Owner-Zugang</h3><p>Gib das Owner-Passwort ein, um Events und Spieloptionen zu verwalten.</p><div class="owner-box"><input id="owner-password" type="password" autocomplete="current-password" placeholder="Passwort" aria-label="Owner-Passwort"><button class="btn primary" id="owner-login">Anmelden</button></div><p id="owner-error" style="color:#ff8494"></p></div><p class="notice">Hinweis: Auf einer statischen GitHub Pages-Seite ist ein Passwortschutz im Browser nicht geheim oder sicher. Für echte Zugriffskontrolle ist ein Backend nötig.</p>`;
+          const login=()=>{if($("#owner-password").value==="VEXIL26.09.2013"){ownerUnlocked=true;activeOwnerTab="overview";renderOwnerPanel();showToast("Owner-Modus aktiviert.");}else $("#owner-error").textContent="Passwort stimmt nicht.";};
+          $("#owner-login").onclick=login;$("#owner-password").onkeydown=e=>{if(e.key==="Enter")login();};return;
+        }
+        pruneBans();
+        const activeCount=events.filter(e=>e.active).length;
+        const playerCount=new Set(scores.map(s=>s.player)).size;
+        box.innerHTML=`<div class="side-title"><h2>Owner Dashboard</h2><button class="btn small" id="owner-logout">Abmelden</button></div><div class="admin-stat-grid"><div class="admin-stat"><strong>${events.length}/50</strong><span>Events erstellt</span><div class="admin-progress"><span style="width:${events.length*2}%"></span></div></div><div class="admin-stat"><strong>${activeCount}</strong><span>Events aktiv</span></div><div class="admin-stat"><strong>${bans.length}</strong><span>Spieler gesperrt</span></div><div class="admin-stat"><strong>${playerCount}</strong><span>Lokale Spieler</span></div></div><div class="admin-grid"><label>Spielername<input id="player-name" maxlength="18" value="${escapeHtml(prefs.player)}"></label><label>Event-Liste<select id="event-filter"><option value="all">Alle Events</option><option value="active">Nur aktive</option></select></label></div><div class="owner-controls"><h3>Event erstellen</h3><p>Aktive Events zeigen einen Live-Hinweis und wenden ihren Effekt direkt auf Spielpunkte an.</p><div class="admin-grid"><label>Eventname<input id="event-name" maxlength="36" placeholder="z. B. Wochenend-Bonus"></label><label>Event-Effekt<select id="event-type"><option value="bonus">Punktebonus</option><option value="double">Punkte verdoppeln</option></select></label><label id="event-bonus-label">Bonus pro Spiel<input id="event-bonus" type="number" min="0" max="500" value="25"></label><button class="btn primary wide" id="add-event" ${events.length>=50?"disabled":""}>＋ Event erstellen</button></div><div class="event-list" id="event-list"></div></div><div class="owner-controls"><h3>Spieler sperren</h3><p>Gilt für dieses Gerät und blockiert Spielstarts sowie Punkte. Für eine websiteweite Sperre ist ein Server nötig.</p><div class="admin-grid"><label>Spielername<input id="ban-name" maxlength="18" placeholder="Name aus der Bestenliste"></label><label>Sperrdauer<select id="ban-duration"><option value="0">Permanent</option><option value="3600000">1 Stunde</option><option value="86400000">24 Stunden</option><option value="604800000">7 Tage</option><option value="2592000000">30 Tage</option></select></label><label class="wide">Grund<input id="ban-reason" maxlength="80" placeholder="z. B. Regelverstoß"></label><button class="btn primary wide" id="add-ban">🚫 Spieler sperren</button></div><div id="ban-list" class="ban-list"></div></div><div class="owner-controls"><h3>Hintergrund auswählen</h3><p>Sieben Offline-Designs, gespeichert auf diesem Gerät.</p><div class="theme-list">${themes.map(([id,label])=>`<button class="theme-btn ${prefs.theme===id?"active":""}" data-owner-theme="${id}">${label}</button>`).join("")}</div></div><div class="owner-controls"><h3>💾 Daten sichern</h3><p>Profil, Punkte, Events, Sperren und angefangene Duelle werden automatisch auf diesem Gerät gespeichert. Backups übertragen diese Daten zwischen Browsern.</p><div class="owner-tools"><button class="btn primary" id="export-data">Backup herunterladen</button><button class="btn" id="import-data-trigger">Backup importieren</button><input id="import-data" type="file" accept="application/json,.json" hidden></div><p id="backup-status" class="notice">Letzte Änderungen werden automatisch gespeichert.</p></div><p class="notice">Owner-Zugang und Sperren sind lokale Demo-Funktionen. GitHub Pages kann sie nicht gegen Quellcode-Zugriff absichern.</p>`;
+        const children=Array.from(box.children),stats=children.find(el=>el.classList.contains("admin-stat-grid")),overview=children.find(el=>el.classList.contains("admin-grid")),sections=children.filter(el=>el.classList.contains("owner-controls"));
+        stats.insertAdjacentHTML("afterend",'<nav class="owner-tabs" aria-label="Owner-Bereiche"><button class="owner-tab" data-owner-tab="overview" aria-pressed="false">Übersicht</button><button class="owner-tab" data-owner-tab="events" aria-pressed="false">Events</button><button class="owner-tab" data-owner-tab="moderation" aria-pressed="false">Sperren</button><button class="owner-tab" data-owner-tab="appearance" aria-pressed="false">Design</button><button class="owner-tab" data-owner-tab="backup" aria-pressed="false">Backup</button></nav>');
+        const ownerSections={overview:[stats,overview],events:[sections[0]],moderation:[sections[1]],appearance:[sections[2]],backup:[sections[3]]};
+        Object.entries(ownerSections).forEach(([name,elements])=>elements.forEach(el=>{el.dataset.ownerSection=name;}));
+        const activateOwnerTab=name=>{
+         activeOwnerTab=ownerSections[name]?name:"overview";
+         box.querySelectorAll("[data-owner-tab]").forEach(button=>{const active=button.dataset.ownerTab===activeOwnerTab;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
+         box.querySelectorAll("[data-owner-section]").forEach(section=>{section.hidden=section.dataset.ownerSection!==activeOwnerTab;});
+        };
+        box.querySelectorAll("[data-owner-tab]").forEach(button=>button.onclick=()=>activateOwnerTab(button.dataset.ownerTab));
+        activateOwnerTab(activeOwnerTab);
+        $("#owner-logout").onclick=()=>{ownerUnlocked=false;renderOwnerPanel();renderGameOwnerControls();};
+        $("#player-name").onchange=()=>{const value=$("#player-name").value.trim();if(value){prefs.player=value;storage.write("prefs",prefs);renderScores();renderGames();}};
+        $("#export-data").onclick=exportBackup;
+        $("#import-data-trigger").onclick=()=>$("#import-data").click();
+        $("#import-data").onchange=()=>{const file=$("#import-data").files[0];if(file)importBackup(file);};
+        const eventType=$("#event-type"),bonusLabel=$("#event-bonus-label");
+        eventType.onchange=()=>{bonusLabel.hidden=eventType.value==="double";};
+        eventType.onchange();
+        $("#add-event").onclick=()=>{const name=$("#event-name").value.trim(),type=eventType.value,bonus=Number($("#event-bonus").value);if(!name){showToast("Bitte einen Eventnamen eingeben.");return;}if(events.length>=50){showToast("Das Limit von 50 Events ist erreicht.");return;}if(type==="bonus"&&(!Number.isFinite(bonus)||bonus<0||bonus>500)){showToast("Bonus muss zwischen 0 und 500 liegen.");return;}events.push({id:Date.now(),name,type,bonus:type==="bonus"?bonus:0,active:false});storage.write("events",events);renderOwnerPanel();renderActiveEvents();};
+        $("#add-ban").onclick=()=>{const name=$("#ban-name").value.trim(),reason=$("#ban-reason").value.trim(),duration=Number($("#ban-duration").value);if(!name){showToast("Bitte einen Spielernamen eingeben.");return;}if(activeBan(name)){showToast("Dieser Spieler ist bereits gesperrt.");return;}bans.push({name,reason,createdAt:Date.now(),expiresAt:duration?Date.now()+duration:null});storage.write("bans",bans);renderOwnerPanel();renderBanNotice();showToast(`${name} wurde gesperrt.`);};
+        document.querySelectorAll("[data-owner-theme]").forEach(b=>{
+          const active=b.dataset.ownerTheme===prefs.theme;b.classList.toggle("active",active);b.setAttribute("aria-pressed",String(active));
+          b.onclick=()=>{prefs.theme=b.dataset.ownerTheme;document.body.dataset.theme=prefs.theme;storage.write("prefs",prefs);document.querySelectorAll(".theme-btn").forEach(x=>{const selected=x.dataset.theme===prefs.theme||x.dataset.ownerTheme===prefs.theme;x.classList.toggle("active",selected);x.setAttribute("aria-pressed",String(selected));});};
+        });
+        renderEvents();
+        renderBans();
+        $("#event-filter").onchange=renderEvents;
+      }
+      function renderEvents() {
+        const list=$("#event-list");if(!list)return;
+        const filtered=events.filter(e=>$("#event-filter")?.value!=="active"||e.active);
+        list.innerHTML=filtered.length?filtered.map(e=>`<div class="event-item ${e.active?"active":""}"><span>${escapeHtml(e.name)}<small>${e.type==="double"?"Doppelte Punkte":`+${Number(e.bonus)||0} Punkte pro Runde`}</small></span><span style="display:flex;gap:6px"><button class="btn small" data-toggle-event="${e.id}">${e.active?"Stoppen":"Starten"}</button><button class="btn small" data-delete-event="${e.id}" aria-label="Event löschen">×</button></span></div>`).join(""):'<div class="empty">Noch keine Events erstellt.</div>';
+        list.querySelectorAll("[data-toggle-event]").forEach(b=>b.onclick=()=>{const event=events.find(x=>x.id===Number(b.dataset.toggleEvent));if(event){event.active=!event.active;storage.write("events",events);renderOwnerPanel();renderActiveEvents();}});
+        list.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=()=>{events=events.filter(x=>x.id!==Number(b.dataset.deleteEvent));storage.write("events",events);renderOwnerPanel();renderActiveEvents();});
+      }
+      function renderBans() {
+        const list=$("#ban-list");if(!list)return;
+        pruneBans();
+        list.innerHTML=bans.length?bans.map((ban,index)=>`<div class="ban-row"><span><strong>${escapeHtml(ban.name)}</strong><small>${escapeHtml(ban.reason||"Kein Grund angegeben")} · ${ban.expiresAt?"bis "+new Date(ban.expiresAt).toLocaleString("de-DE"):"Permanent"}</small></span><button class="btn small" data-unban="${index}">Entsperren</button></div>`).join(""):'<div class="empty">Keine Spieler gesperrt.</div>';
+        list.querySelectorAll("[data-unban]").forEach(button=>button.onclick=()=>{const ban=bans.splice(Number(button.dataset.unban),1)[0];storage.write("bans",bans);renderOwnerPanel();renderBanNotice();showToast(`${ban.name} wurde entsperrt.`);});
+      }
+      renderGames();renderScores();renderActiveEvents();renderResumeBanner();
+    })();
+  </script>
+</body>
+</html>
